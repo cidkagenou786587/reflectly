@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Journaling App</title>
+  
+<style>
+    /* Basic Styles */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e3f2fd; /* Light blue background */
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav {
+      background-color: #1e88e5; /* Blue */
+      color: #fff;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 15px;
+      font-size: 16px;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: #bbdefb; /* Light blue hover */
+    }
+
+    .auth-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      margin: 20px;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .auth-container input {
+      padding: 12px;
+      margin: 10px;
+      width: 250px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    .auth-container button {
+      width: 100%;
+      background-color: #1e88e5; /* Blue */
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .auth-container button:hover {
+      background-color: #1976d2; /* Darker blue */
+    }
+
+    #dashboard {
+      padding: 30px;
+      max-width: 900px;
+      margin: 20px auto;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .journal-entry-form {
+      background-color: #ffffff;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    textarea {
+      width: 100%;
+      height: 180px;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+      resize: none;
+      box-sizing: border-box;
+    }
+
+    .mood-selector {
+      margin-bottom: 15px;
+    }
+
+    .mood-selector select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      background-color: #fafafa;
+    }
+
+    button {
+      background-color: #1e88e5; /* Blue */
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #1976d2; /* Darker blue */
+    }
+
+    #past-entries {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #entries-list {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    #entries-list li {
+      background-color: #bbdefb; /* Light blue background for each entry */
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    footer {
+      background-color: #1e88e5; /* Blue */
+      color: #fff;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .notification {
+      background-color: #64b5f6; /* Blue notification */
+      color: white;
+      padding: 10px;
+      margin: 10px;
+      border-radius: 5px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav>
+    <div class="logo">JournalApp</div>
+    <div class="nav-links">
+      <a href="#home" onclick="showDashboard()">Home</a>
+      <a href="#login" onclick="showLogin()">Log In</a>
+      <a href="#signup" onclick="showSignUp()">Sign Up</a>
+      <a href="#logout" onclick="logOut()">Log Out</a>
+    </div>
+  </nav>
+
+  <!-- Notification Area -->
+  <div id="notification-area" class="notification" style="display: none;"></div>
+
+  <!-- Sign Up Form -->
+  <div id="signup-form" class="auth-container" style="display: none;">
+    <h2>Sign Up</h2>
+    <input type="text" id="signup-username" placeholder="Username">
+    <input type="password" id="signup-password" placeholder="Password">
+    <button type="button" onclick="signUp()">Sign Up</button>
+  </div>
+
+  <!-- Log In Form -->
+  <div id="login-form" class="auth-container" style="display: none;">
+    <h2>Log In</h2>
+    <input type="text" id="login-username" placeholder="Username">
+    <input type="password" id="login-password" placeholder="Password">
+    <button type="button" onclick="logIn()">Log In</button>
+  </div>
+
+  <!-- Dashboard Section (Main Page) -->
+  <section id="dashboard" style="display: none;">
+    <h2>Welcome to your Journaling Dashboard</h2>
+
+    <!-- Journal Entry Form -->
+    <div class="journal-entry-form">
+      <textarea id="journal-entry" placeholder="Write your thoughts here..."></textarea>
+      <div class="mood-selector">
+        <label for="mood">Mood:</label>
+        <select id="mood">
+          <option value="happy">Happy</option>
+          <option value="sad">Sad</option>
+          <option value="neutral">Neutral</option>
+          <option value="angry">Angry</option>
+          <option value="excited">Excited</option>
+          <option value="anxious">Anxious</option>
+          <option value="relaxed">Relaxed</option>
+          <option value="grateful">Grateful</option>
+          <option value="hopeful">Hopeful</option>
+          <option value="bored">Bored</option>
+        </select>
+      </div>
+
+      <button type="button" id="save-entry-button" onclick="saveEntry()">Save Entry</button>
+    </div>
+
+    <!-- List of Past Entries -->
+    <div id="past-entries">
+      <h3>Past Entries</h3>
+      <ul id="entries-list">
+        <!-- Entries will be listed here -->
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2024 JournalApp. All Rights Reserved.</p>
+  </footer>
+
+  <script>
+    // Show sign-up form
+    function showSignUp() {
+      document.getElementById('signup-form').style.display = 'block';
+      document.getElementById('login-form').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'none';
+      document.getElementById('notification-area').style.display = 'none';
+    }
+
+    // Show login form
+    function showLogin() {
+      document.getElementById('login-form').style.display = 'block';
+      document.getElementById('signup-form').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'none';
+      document.getElementById('notification-area').style.display = 'none';
+    }
+
+    // Show dashboard
+    function showDashboard() {
+      const isLoggedIn = localStorage.getItem('username');
+      if (isLoggedIn) {
+        document.getElementById('dashboard').style.display = 'block';
+        document.getElementById('signup-form').style.display = 'none';
+        document.getElementById('login-form').style.display = 'none';
+        loadEntries();
+      } else {
+        showLogin();
+      }
+    }
+
+    // Sign-up user
+    function signUp() {
+      const username = document.getElementById('signup-username').value.trim().toLowerCase();
+      const password = document.getElementById('signup-password').value.trim();
+
+      if (username && password) {
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+        if (users.some(user => user.username === username)) {
+          showNotification('This username is already taken. Please choose a different one.');
+        } else {
+          users.push({ username, password });
+          localStorage.setItem('users', JSON.stringify(users));
+          showNotification('Sign-up successful! Please log in.');
+          document.getElementById('signup-username').value = '';
+          document.getElementById('signup-password').value = '';
+          showLogin();
+        }
+      } else {
+        showNotification('Please fill in both fields.');
+      }
+    }
+
+    // Log-in user
+    function logIn() {
+      const username = document.getElementById('login-username').value.trim().toLowerCase();
+      const password = document.getElementById('login-password').value.trim();
+      let users = JSON.parse(localStorage.getItem('users')) || [];
+      const user = users.find(user => user.username === username && user.password === password);
+
+      if (user) {
+        localStorage.setItem('username', username);
+        showNotification('Login successful!');
+        document.getElementById('login-username').value = '';
+        document.getElementById('login-password').value = '';
+        showDashboard();
+      } else {
+        showNotification('Invalid username or password.');
+      }
+    }
+
+    // Log-out user
+    function logOut() {
+      localStorage.removeItem('username');
+      showLogin();
+      showNotification('You have been logged out.');
+    }
+
+    // Save journal entry
+    function saveEntry() {
+      const mood = document.getElementById('mood').value;
+      const journalEntry = document.getElementById('journal-entry').value;
+
+      if (journalEntry) {
+        let entries = JSON.parse(localStorage.getItem('journalEntries')) || [];
+        entries.push({ mood, journalEntry });
+        localStorage.setItem('journalEntries', JSON.stringify(entries));
+
+        document.getElementById('journal-entry').value = '';
+        loadEntries();
+        showNotification('Entry saved!');
+      } else {
+        showNotification('Please write something before saving your entry!');
+      }
+    }
+
+    // Load saved journal entries
+    function loadEntries() {
+      const entriesList = document.getElementById('entries-list');
+      const entries = JSON.parse(localStorage.getItem('journalEntries')) || [];
+
+      entriesList.innerHTML = '';
+      entries.forEach((entry, index) => {
+        const entryItem = document.createElement('li');
+        entryItem.innerHTML = `
+          <strong>${entry.mood.charAt(0).toUpperCase() + entry.mood.slice(1)}</strong>: ${entry.journalEntry}
+          <button onclick="editEntry(${index})">Edit</button>
+          <button onclick="removeEntry(${index})">Remove</button>
+        `;
+        entriesList.appendChild(entryItem);
+      });
+    }
+
+    // Remove saved journal entry
+    function removeEntry(index) {
+      let entries = JSON.parse(localStorage.getItem('journalEntries')) || [];
+      entries.splice(index, 1);
+      localStorage.setItem('journalEntries', JSON.stringify(entries));
+      loadEntries();
+      showNotification('Entry removed!');
+    }
+
+    // Edit existing journal entry
+    function editEntry(index) {
+      const entries = JSON.parse(localStorage.getItem('journalEntries')) || [];
+      const entry = entries[index];
+
+      document.getElementById('mood').value = entry.mood;
+      document.getElementById('journal-entry').value = entry.journalEntry;
+
+      // Change Save Entry button to Update Entry
+      const saveButton = document.getElementById('save-entry-button');
+      saveButton.textContent = 'Update Entry';
+      saveButton.onclick = function() {
+        updateEntry(index);
+      };
+    }
+
+    // Update existing journal entry
+    function updateEntry(index) {
+      const mood = document.getElementById('mood').value;
+      const journalEntry = document.getElementById('journal-entry').value;
+
+      if (journalEntry) {
+        let entries = JSON.parse(localStorage.getItem('journalEntries')) || [];
+        entries[index] = { mood, journalEntry };
+        localStorage.setItem('journalEntries', JSON.stringify(entries));
+        loadEntries();
+
+        showNotification('Entry updated!');
+        document.getElementById('journal-entry').value = '';
+        const saveButton = document.getElementById('save-entry-button');
+        saveButton.textContent = 'Save Entry'; // Reset to original text
+        saveButton.onclick = saveEntry; // Revert to save action
+      } else {
+        showNotification('Please write something before saving your entry!');
+      }
+    }
+
+    // Show notifications
+    function showNotification(message) {
+      const notificationArea = document.getElementById('notification-area');
+      notificationArea.innerText = message;
+      notificationArea.style.display = 'block';
+      setTimeout(() => {
+        notificationArea.style.display = 'none';
+      }, 5000);
+    }
+  </script>
+</body>
+</html>
